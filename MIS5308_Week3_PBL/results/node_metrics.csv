@@ -1,0 +1,11 @@
+,platform,degree,weighted_degree,in_strength,out_strength,degree_c,betweenness,betweenness_w,eigenvector,closeness,pagerank,constraint,articulation_point,cross_platform_edges,community,participation,Platform,Followers,Engagement Rate,Avg Likes,Avg Comments,Tone Style,Content Type,best_format,cost_per_conversion,Conversion Rate,brand_fit,suitability
+TechNova,Instagram,2,4,0,4,0.222,0.5,0.5,0.228,0.474,0.019,0.5,True,1,0,0.375,Instagram,520000,0.048,24960,890,Energetic,Tech Reviews,Video,9.862,0.011,4,61.644
+FitSara,Instagram,3,6,3,3,0.333,0.722,0.722,0.183,0.529,0.032,0.333,True,1,0,0.278,Instagram,310000,0.072,22320,1500,Motivational,Fitness,Video,4.369,0.023,5,69.749
+DrWearable,LinkedIn,2,4,1,3,0.222,0.0,0.0,0.066,0.321,0.146,1.007,False,0,1,0.0,LinkedIn,180000,0.031,1900,230,Professional,Industry Insights,Long-Form,38.986,0.009,4,29.285
+GadgetGuyX,Twitter,3,6,2,4,0.333,0.389,0.389,0.608,0.391,0.14,0.611,True,1,2,0.278,Twitter,140000,0.029,1200,98,Humorous,Tech,Short Tweet,41.744,0.007,2,31.139
+ZenLife,Instagram,1,1,1,0,0.111,0.0,0.0,0.015,0.29,0.051,1.0,False,0,0,0.0,Instagram,90000,0.095,8550,430,Calm,Lifestyle,Reel,15.141,0.018,3,35.858
+PulseGuru,Twitter,2,3,2,1,0.222,0.0,0.0,0.366,0.3,0.137,1.007,False,0,2,0.0,Twitter,70000,0.041,870,65,Informative,Wearables,,,,4,31.136
+ProCoach,LinkedIn,3,6,4,2,0.333,0.389,0.417,0.095,0.429,0.152,0.611,True,1,1,0.278,LinkedIn,95000,0.039,1300,185,Professional,Wellness,,,,4,38.098
+RunSmart,Instagram,2,3,2,1,0.222,0.222,0.222,0.075,0.391,0.037,0.5,True,0,0,0.0,Instagram,220000,0.064,14080,650,Sporty,Running,Video,7.421,0.02,5,51.701
+DataDev,Twitter,2,6,4,2,0.222,0.0,0.222,0.624,0.3,0.138,1.007,False,0,2,0.0,Twitter,55000,0.048,870,72,Analytical,Tech Reviews,,,,3,32.223
+HealthInsider,LinkedIn,2,3,2,1,0.222,0.0,0.0,0.051,0.321,0.149,1.007,False,0,1,0.0,LinkedIn,210000,0.044,2600,245,Professional,Health Tech,,,,5,38.733

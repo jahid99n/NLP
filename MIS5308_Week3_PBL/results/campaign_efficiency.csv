@@ -1,0 +1,9 @@
+Influencer,Content Type,Click-Through Rate,Conversion Rate,Cost per Post (USD),Followers,Engagement Rate,est_clicks,est_conversions,cost_per_conversion,conv_per_1k_usd
+TechNova,Video,0.039,0.011,2200,520000,0.048,20280.0,223.08,9.862,101.4
+TechNova,Image Carousel,0.026,0.008,1800,520000,0.048,13520.0,108.16,16.642,60.089
+FitSara,Video,0.061,0.023,1900,310000,0.072,18910.0,434.93,4.369,228.911
+FitSara,Story,0.047,0.014,1500,310000,0.072,14570.0,203.98,7.354,135.987
+DrWearable,Long-Form,0.019,0.009,1200,180000,0.031,3420.0,30.78,38.986,25.65
+GadgetGuyX,Short Tweet,0.022,0.007,900,140000,0.029,3080.0,21.56,41.744,23.956
+ZenLife,Reel,0.053,0.018,1300,90000,0.095,4770.0,85.86,15.141,66.046
+RunSmart,Video,0.049,0.02,1600,220000,0.064,10780.0,215.6,7.421,134.75
