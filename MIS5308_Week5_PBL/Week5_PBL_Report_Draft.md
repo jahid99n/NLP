@@ -109,7 +109,7 @@ Wang, Y., Huang, M., Zhu, X., & Zhao, L. (2016). Attention-based LSTM for aspect
 
 ## Appendix A. Data collection detail
 
-![Figure A1. End-to-end analytics pipeline, with a governance layer applied at every stage.](figures/fig1_pipeline.png){w=600}
+![Figure A1. End-to-end analytics pipeline, with a governance layer applied at every stage.](figures/fig1_pipeline.png){w=560}
 
 **Table A1. Detailed collection plan by platform**
 

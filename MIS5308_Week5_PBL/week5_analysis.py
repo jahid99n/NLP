@@ -162,26 +162,59 @@ def trend(ax, title):
     ax.legend(frameon=False, fontsize=7.5, loc="lower right", ncol=2)
     ax.set_title(title, loc="left", fontsize=11, color=INK)
 
-# Fig 1 - pipeline architecture
-fig, ax = plt.subplots(figsize=(13.4, 3.1)); ax.axis("off"); ax.set_xlim(0, 13.3); ax.set_ylim(0, 3.1)
-stages = [("1. Collect", "X API v2 (filtered stream)\nFacebook Graph API\n(own Page + comments)\nTripAdvisor Content API\nNews & blog RSS"),
-          ("2. Filter", "Keyword/hashtag taxonomy\n(misspellings, 8 langs)\nWindow: T−14 to T+30\nGeotag: AU vs intl."),
-          ("3. Clean", "Normalise text & emoji\nLanguage detection\nMachine translation\nNear-duplicate removal\nBot / spam filter"),
-          ("4. Enrich", "Multi-aspect extraction\nEntity tags (refund,\nbaggage, route)\nConfidence score\nPII masking"),
-          ("5. Analyse", "Overall sentiment\nAspect sentiment (ABSA)\nTemporal change-points\nPlatform & market splits"),
-          ("6. Act", "Crisis dashboard\n(hourly refresh)\nAlerts to Crisis\nResponse Team\nWeekly CEO brief")]
-w, gap = 2.0, .2
-for i, (h, body) in enumerate(stages):
-    x = .05 + i * (w + gap)
-    ax.add_patch(plt.matplotlib.patches.FancyBboxPatch((x, .45), w, 2.15, boxstyle="round,pad=0.02,rounding_size=0.08",
-                 fc=PANEL, ec=GRID, lw=1))
-    ax.text(x + .1, 2.45, h, fontsize=11, weight="bold", color=INK, va="top")
-    ax.text(x + .1, 1.98, body, fontsize=8.2, color=INK, va="top", linespacing=1.5)
-    if i < len(stages) - 1:
-        ax.annotate("", xy=(x + w + gap - .01, 1.35), xytext=(x + w + .01, 1.35),
-                    arrowprops=dict(arrowstyle="-|>", color=MUTED, lw=1.4))
-ax.text(.05, 3.0, "Governance layer across all stages: DPIA · ToS register · data minimisation · 90-day retention · bias audits",
-        fontsize=9, color=MUTED, va="top")
+# Fig 1 - pipeline architecture (two rows of three stages, governance band underneath)
+from matplotlib.patches import FancyBboxPatch, Rectangle
+HEAD, BODY, EDGE = "#1f3864", "#f7f8fa", "#b8bfca"
+stages = [
+    ("Collect", ["X (Twitter) API v2 stream", "Facebook Graph API", "TripAdvisor Content API", "News & blog RSS feeds"]),
+    ("Filter", ["Keyword & hashtag taxonomy", "Misspellings, 8 languages", "Window: T−14 to T+30 days", "Geotag: domestic vs intl."]),
+    ("Clean", ["Normalise text & emoji", "Detect language, translate", "Remove near-duplicates", "Filter bots & spam"]),
+    ("Enrich", ["Multi-aspect extraction", "Entity tags (refund, bag)", "Model confidence score", "Mask personal data (PII)"]),
+    ("Analyse", ["Overall sentiment", "Aspect-level sentiment", "Change over time", "Platform & market splits"]),
+    ("Act", ["Crisis dashboard (hourly)", "Alerts to response team", "Weekly CEO brief", "Track recovery KPIs"]),
+]
+W, H, HH, GX, GY = 3.5, 2.05, .5, .75, .8   # box width/height, header height, column/row gaps
+X0, Y_TOP = .3, 3.9
+fig, ax = plt.subplots(figsize=(12.6, 7.1))
+ax.set_xlim(0, 3 * W + 2 * GX + .6); ax.set_ylim(-.35, Y_TOP + H + .25); ax.axis("off")
+fig.canvas.draw(); rend = fig.canvas.get_renderer()
+
+def fits(t, x_right):
+    bb = t.get_window_extent(renderer=rend).transformed(ax.transData.inverted())
+    assert bb.x1 <= x_right, f"text overflows box: {t.get_text()!r}"
+
+boxes = []
+for i, (title, items) in enumerate(stages):
+    r, c = divmod(i, 3)
+    x, y = X0 + c * (W + GX), Y_TOP - r * (H + GY)
+    ax.add_patch(FancyBboxPatch((x, y), W, H, boxstyle="round,pad=0,rounding_size=.08",
+                                fc=BODY, ec=EDGE, lw=1.1))
+    ax.add_patch(Rectangle((x, y + H - HH), W, HH, fc=HEAD, ec=HEAD, lw=1.1))
+    t = ax.text(x + .18, y + H - HH / 2, f"{i + 1}  {title}", color="white", fontsize=12.5,
+                weight="bold", va="center"); fits(t, x + W)
+    for k, item in enumerate(items):
+        t = ax.text(x + .22, y + H - HH - .30 - k * .32, f"•  {item}", fontsize=10, color=INK,
+                    va="center"); fits(t, x + W - .08)
+    boxes.append((x, y))
+
+arrow = dict(arrowstyle="-|>", color=HEAD, lw=1.6, mutation_scale=14)
+for i in (0, 1, 3, 4):                      # left-to-right within each row
+    x, y = boxes[i]
+    ax.annotate("", xy=(x + W + GX - .04, y + H / 2), xytext=(x + W + .04, y + H / 2), arrowprops=arrow)
+# row 1 -> row 2: elbow from the bottom of "Clean" to the top of "Enrich"
+(x3, y3), (x4, y4) = boxes[2], boxes[3]
+ym = y3 - GY / 2
+ax.plot([x3 + W / 2, x3 + W / 2, x4 + W / 2], [y3 - .04, ym, ym], color=HEAD, lw=1.6, solid_capstyle="round")
+ax.annotate("", xy=(x4 + W / 2, y4 + H + .04), xytext=(x4 + W / 2, ym + .01), arrowprops=arrow)
+
+# governance band spanning both rows' width
+gy, gw = -.25, 3 * W + 2 * GX
+ax.add_patch(FancyBboxPatch((X0, gy), gw, .62, boxstyle="round,pad=0,rounding_size=.08",
+                            fc="#eef2f8", ec=HEAD, lw=1.1, ls=(0, (4, 2))))
+t = ax.text(X0 + .2, gy + .31, "Governance (all stages):", fontsize=10.5, weight="bold", color=HEAD, va="center")
+lab = t.get_window_extent(renderer=rend).transformed(ax.transData.inverted())
+t = ax.text(lab.x1 + .2, gy + .31, "DPIA  ·  platform ToS register  ·  data minimisation  ·  90-day retention  ·  quarterly bias audit",
+        fontsize=10, color=INK, va="center"); fits(t, X0 + gw)
 fig.savefig(FIG / "fig1_pipeline.png", dpi=200, bbox_inches="tight"); plt.close(fig)
 
 # Fig 2 - dashboard mock-up
