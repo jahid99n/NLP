@@ -4,6 +4,8 @@ Run: python week3_analysis.py   (needs pandas, openpyxl, networkx, matplotlib, s
 Outputs: results/*.csv and figures/*.png
 """
 import math
+
+import numpy as np
 from pathlib import Path
 
 import matplotlib.pyplot as plt
@@ -180,7 +182,7 @@ def draw_network(ax):
 
 fig, ax = plt.subplots(figsize=(11, 7.5))
 draw_network(ax)
-ax.set_title(f"Figure 1. PulseWear multi-layer influencer network  "
+ax.set_title(f"PulseWear multi-layer influencer network  "
              f"(Louvain, {len(comms)} communities, Q = {Q:.2f})",
              loc="left", fontsize=12, color=INK)
 fig.text(.01, .01, "Node size = followers; edge width = interaction weight; BC = normalised "
@@ -191,7 +193,7 @@ fig.savefig(FIG / "fig1_multilayer_network.png", dpi=200, bbox_inches="tight"); 
 # Fig 2: per-layer small multiples
 fig, axes = plt.subplots(1, 3, figsize=(12, 3.6))
 for ax, (p, L) in zip(axes, layers.items()):
-    lp = nx.circular_layout(L)
+    lp = {n: pos[n] for n in L}  # same positions as Figure 1 for easy comparison
     nx.draw_networkx_edges(L, lp, ax=ax, edge_color=PLAT_COL[p],
                            width=[1 + L[u][v]["weight"] for u, v in L.edges])
     nx.draw_networkx_nodes(L, lp, ax=ax, node_color=PLAT_COL[p], node_size=500,
@@ -199,8 +201,8 @@ for ax, (p, L) in zip(axes, layers.items()):
     nx.draw_networkx_labels(L, {k: (x, y - .28) for k, (x, y) in lp.items()}, ax=ax,
                             font_size=8, font_color=INK)
     ax.set_title(f"{p} layer - density {nx.density(L):.2f}", fontsize=10, color=INK, loc="left")
-    ax.margins(.25); ax.axis("off")
-fig.suptitle("Figure 2. Platform layers shown separately (intra-layer ties only)",
+    ax.margins(.3); ax.axis("off")
+fig.suptitle("Platform layers shown separately (intra-layer ties only)",
              x=.01, ha="left", fontsize=12, color=INK)
 fig.savefig(FIG / "fig2_layers.png", dpi=200, bbox_inches="tight"); plt.close(fig)
 
@@ -219,7 +221,7 @@ for ax, (col, lab) in zip(axes, [("degree_c", "Degree"), ("betweenness", "Betwee
     ax.set_axisbelow(True)
 fig.legend(handles=[plt.Rectangle((0, 0), 1, 1, color=v, label=k) for k, v in PLAT_COL.items()],
            frameon=False, fontsize=8, loc="upper right", ncol=3)
-fig.suptitle("Figure 3. Centrality measures by influencer (colour = home platform)",
+fig.suptitle("Centrality measures by influencer (colour = home platform)",
              x=.01, ha="left", fontsize=12, color=INK)
 fig.tight_layout(); fig.savefig(FIG / "fig3_centrality.png", dpi=200, bbox_inches="tight")
 plt.close(fig)
@@ -236,7 +238,7 @@ ax.invert_yaxis(); ax.spines[["top", "right"]].set_visible(False)
 ax.legend(handles=[plt.Rectangle((0, 0), 1, 1, color=v, label=k) for k, v in PLAT_COL.items()],
           frameon=False, fontsize=8, loc="lower right", bbox_to_anchor=(1, .3))
 ax.set_xlabel("Estimated cost per conversion (USD, lower is better)")
-ax.set_title("Figure 4. Estimated cost per conversion by influencer x format",
+ax.set_title("Estimated cost per conversion by influencer x format",
              loc="left", fontsize=12, color=INK)
 fig.tight_layout(); fig.savefig(FIG / "fig4_cost_per_conversion.png", dpi=200); plt.close(fig)
 
@@ -274,9 +276,47 @@ t.auto_set_font_size(False); t.set_fontsize(8.5); t.scale(1, 1.5)
 for (r, _), cell in t.get_celld().items():
     cell.set_edgecolor(GRID)
     if r == 0: cell.set_text_props(weight="bold", color=INK); cell.set_facecolor("#f4f3ef")
-fig.suptitle("Figure 5. PulseWear Vantage - influencer network & experiment dashboard (mock-up)",
+fig.suptitle("PulseWear Vantage - influencer network & experiment dashboard (mock-up)",
              x=.01, ha="left", fontsize=14, color=INK)
 fig.savefig(FIG / "fig5_dashboard_mockup.png", dpi=170, bbox_inches="tight"); plt.close(fig)
+
+# ---------------------------------------------------------------- appendix figures
+# Figure A-heatmap: decision-matrix criterion scores (sequential, one hue)
+from matplotlib.colors import LinearSegmentedColormap
+crit = score.drop(columns="Suitability (0-100)")
+cmap = LinearSegmentedColormap.from_list("blue", ["#eef4fc", "#9ec5f4", "#3987e5", "#184f95"])
+fig, ax = plt.subplots(figsize=(10, 5))
+im = ax.imshow(crit.values, cmap=cmap, vmin=0, vmax=1, aspect="auto")
+ax.set_xticks(range(crit.shape[1]), crit.columns, rotation=20, ha="right")
+ax.set_yticks(range(len(crit)), [f"{n}  ({s:.0f})" for n, s in score["Suitability (0-100)"].items()])
+for (r, k), v in np.ndenumerate(crit.values):
+    ax.text(k, r, f"{v:.2f}", ha="center", va="center", fontsize=8,
+            color="white" if v > .6 else INK)
+ax.tick_params(length=0); [s.set_visible(False) for s in ax.spines.values()]
+fig.colorbar(im, ax=ax, fraction=.03, label="Normalised score (0-1)")
+ax.set_title("Decision-matrix criterion scores (overall suitability in brackets)",
+             loc="left", fontsize=12, color=INK)
+fig.tight_layout(); fig.savefig(FIG / "figA4_decision_heatmap.png", dpi=200); plt.close(fig)
+
+# Figure A-power: clicks needed per arm vs minimum detectable lift
+lifts = np.linspace(.10, .60, 51)
+need = [n_per_arm(base_cr, base_cr * (1 + l)) for l in lifts]
+fig, ax = plt.subplots(figsize=(9, 4))
+ax.plot(lifts * 100, need, color="#2a78d6", lw=2)
+for l in (.2, .3, .5):
+    n = n_per_arm(base_cr, base_cr * (1 + l))
+    ax.scatter(l * 100, n, s=40, color="#2a78d6", edgecolors="white", zorder=3)
+    ax.annotate(f"+{l:.0%}: {n:,} clicks", (l * 100, n), xytext=(8, 6),
+                textcoords="offset points", fontsize=8.5, color=INK)
+ax.axhline(19000, color=MUTED, ls="--", lw=1)
+ax.text(60, 19000 * 1.08, "≈ clicks from one FitSara / TechNova video post", ha="right",
+        fontsize=8, color=MUTED)
+ax.set_yscale("log"); ax.set_xlabel("Minimum detectable relative lift in conversion rate (%)")
+ax.set_ylabel("Clicks needed per arm (log scale)")
+ax.spines[["top", "right"]].set_visible(False); ax.grid(axis="y", color=GRID, lw=.6)
+ax.set_title(f"Sample size per arm (baseline CR {base_cr:.2%}, α = 0.05, power = 0.80)",
+             loc="left", fontsize=12, color=INK)
+fig.tight_layout(); fig.savefig(FIG / "figA5_sample_size_curve.png", dpi=200); plt.close(fig)
 
 # ---------------------------------------------------------------- console summary
 pd.set_option("display.width", 200)
