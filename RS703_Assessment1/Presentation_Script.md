@@ -1,6 +1,6 @@
 # RS703 Assessment 1: Presentation Script
 
-**Target time:** about 4 min 45 s (around 630 words at a relaxed pace)
+**Target time:** about 4 min 45 s (around 650 words at a relaxed pace)
 **Say it like:** "Petrič" = *PET-rich*
 
 ---
