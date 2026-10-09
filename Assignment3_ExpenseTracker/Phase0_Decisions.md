@@ -125,7 +125,7 @@ Expected cost: **close to $0** if we stay within the free tier and use a few tes
 | Amplify Hosting | Free tier covers a small static site |
 
 Rules:
-1. Create an **AWS Budgets alert at $10** before building anything.
+1. Create an **AWS Budgets alert** before building anything (done: $15, since $7.69 of usage already existed this month).
 2. Turn on **MFA for the root account**; do the work as an **IAM user**, not root.
 3. Use **one shared AWS account** for the project (one member owns it), giving others IAM users.
 4. Build everything in **ap-southeast-2** only.
@@ -140,8 +140,12 @@ Rules:
 - [ ] Show proposal (section 1) to tutor and get approval
 - [ ] Ask tutor for reflection questions and contribution form template
 - [ ] Fill in team roles (section 5)
-- [ ] Create / choose the shared AWS account; enable MFA; create IAM users
-- [ ] Set up AWS Budgets alert ($10)
+- [x] Choose the shared AWS account (Shuvo's account)
+- [ ] Enable root MFA + create IAM users (postponed – do before Phase 3)
+- [x] Set up AWS Budgets alert ($15 monthly cost budget, `Assignment3-Budget`) – verify email
+- [x] Checked October bill: $0 actual (Free Tier credits); old EC2 + RDS running 24/7 in us-east-1 – decide to delete/stop
+- [x] Textract AnalyzeExpense tested with AWS sample receipt (vendor, date, subtotal, tax, total all read correctly)
+- [ ] Re-test Textract in Sydney with our own receipt
 - [ ] Create GitHub repo with `code/`, `deploy/`, `images/`, `report/` folders
 - [ ] Collect 10–20 sample receipt photos for testing (own receipts, blur personal details)
 - [ ] Note demo week (Week 6) and submission deadline (Sunday Week 7, 11:59pm) in calendar
