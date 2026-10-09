@@ -54,6 +54,8 @@ Status: DRAFT – to be confirmed with tutor. Nothing is deployed yet.
 
 Two spare services above the 8 needed give a safety margin if one is not accepted.
 
+**Design note from testing:** Australian receipts use DD/MM/YYYY dates (e.g. `04/11/2024` = 4 Nov 2024). Textract returns the raw text, so the Lambda must parse dates as day-first. Total comes from the `TOTAL` field, GST from `TAX`, merchant from `VENDOR_NAME`.
+
 ---
 
 ## 4. Technology decisions
@@ -143,9 +145,10 @@ Rules:
 - [x] Choose the shared AWS account (Shuvo's account)
 - [ ] Enable root MFA + create IAM users (postponed – do before Phase 3)
 - [x] Set up AWS Budgets alert ($15 monthly cost budget, `Assignment3-Budget`) – verify email
-- [x] Checked October bill: $0 actual (Free Tier credits); old EC2 + RDS running 24/7 in us-east-1 – decide to delete/stop
+- [x] Checked October bill: $0 actual (Free Tier credits); old EC2 + RDS running 24/7 in us-east-1 – decision: DELETE (not needed)
 - [x] Textract AnalyzeExpense tested with AWS sample receipt (vendor, date, subtotal, tax, total all read correctly)
-- [ ] Re-test Textract in Sydney with our own receipt
+- [x] Tested Textract with our own Coles receipt: vendor, ABN, date, total ($40.00) and GST ($0.38) read correctly
+- [ ] Confirm Textract page loads in Sydney region (last test ran in us-east-1)
 - [ ] Create GitHub repo with `code/`, `deploy/`, `images/`, `report/` folders
 - [ ] Collect 10–20 sample receipt photos for testing (own receipts, blur personal details)
 - [ ] Note demo week (Week 6) and submission deadline (Sunday Week 7, 11:59pm) in calendar
